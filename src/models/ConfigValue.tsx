@@ -1,9 +1,9 @@
 import { ConfigValueType } from "./ConfigValueType";
 
 class ConfigPrimitiveValue {
-    value: ConfigValueType;
-    constructor(value: ConfigValueType) {
-        this.value = value;
+    valueType: ConfigValueType;
+    constructor(valueType: ConfigValueType) {
+        this.valueType = valueType;
     }
     static fromType(value: any, valueType: ConfigValueType): ConfigPrimitiveValue {
         switch (valueType) {
@@ -21,5 +21,16 @@ class ConfigPrimitiveValue {
 
 type ConfigValue = ConfigPrimitiveValue | ConfigPrimitiveValue[] | null;
 
+function formatConfigValueString(value: ConfigValue): string {
+    if (value === null) {
+        return "null";
+    } else if (Array.isArray(value)) {
+        return value.map((v) => formatConfigValueString(v)).join(", ");
+    } else {
+        return value.toString();
+    }
+}
+
 export default ConfigPrimitiveValue;
 export type { ConfigValue };
+export { formatConfigValueString };
