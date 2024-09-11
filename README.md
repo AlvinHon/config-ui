@@ -1,6 +1,6 @@
 # Config UI `(In Progress)`
 
-This is a web application to allow users to create config file by interacting with User Interface.
+This is a web application to allow users to create config file by interacting with User Interface. The web application is now deployed at Github Pages [here](https://alvinhon.github.io/config-ui/)!
 
 Users can define a template in `yaml` format. This template specifies how the UI will be rendered to answer questions like:
 - what are the fields in the config
