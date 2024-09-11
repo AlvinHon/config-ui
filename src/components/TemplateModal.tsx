@@ -1,7 +1,8 @@
-import { Box, Divider, MenuItem, Modal, Select, TextField } from "@mui/material";
+import { Box, Divider, MenuItem, Modal, Select, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { parse } from 'yaml'
 import ConfigSection from "../models/ConfigSection";
+import { Templates, TemplateSelection } from "../Templates";
 
 const style = {
     position: 'absolute',
@@ -17,8 +18,6 @@ const style = {
     px: 4,
     pb: 3,
 };
-
-type TemplateSelection = "sample";
 
 function parseTemplate(templateText: string): ConfigSection[] {
     let parseResult = null;
@@ -57,7 +56,7 @@ export default function TemplateModal(
         setConfigSections: (configFields: ConfigSection[]) => void
     }
 ) {
-    const [templateSelection,] = useState<TemplateSelection>("sample");
+    const [templateSelection, setTemplateSelection] = useState<TemplateSelection | "">("");
     const [templateText, setTemplateText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
@@ -80,13 +79,26 @@ export default function TemplateModal(
         setErrorMsg(errorText);
     }, [templateText, setConfigSections]);
 
+
+    const onSelectionChange = (value: TemplateSelection | "") => {
+        setTemplateSelection(value);
+
+        if (value !== "") {
+            setTemplateText(Templates[value]);
+            return;
+        }
+    }
+
     return (
         <Modal
             open={open}
             onClose={() => setOpen(false)}
         >
             <Box sx={{ ...style }} width="50%">
-                <Select fullWidth sx={{ mb: 2 }} value={templateSelection} >
+                <Select fullWidth sx={{ mb: 2 }} value={templateSelection} onChange={(e) => {
+                    e.preventDefault();
+                    onSelectionChange(e.target.value as any);
+                }} >
                     <MenuItem value="sample">Sample template</MenuItem>
                 </Select>
                 <Divider sx={{ mb: 2 }} />
