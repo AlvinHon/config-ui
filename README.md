@@ -38,4 +38,4 @@ Steps to apply it to the Config UI:
 1. Paste the template to the text area in the form.
 1. Click the gray area to close the form.
 1. Customize the values by interacting with the UI.
-1. Click `Export config`, `Export json` or `Export yaml` to download the configuration file with the customized values.
+1. Click `Export to config`, `Export to json` or `Export to yaml` to download the configuration file with the customized values.

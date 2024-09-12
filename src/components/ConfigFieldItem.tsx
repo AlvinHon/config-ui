@@ -1,12 +1,17 @@
 import { CardContent, Checkbox, InputLabel, List, ListItem, Stack, TextField, Typography } from "@mui/material";
 import ConfigField from "../models/ConfigField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatConfigValueString } from "../models/ConfigValue";
 
 export default function ConfigFieldItem(
     { configField }: { configField: ConfigField }
 ) {
+    const [textValue, setTextValue] = useState("");
     const [isEnable, setIsEnable] = useState(false);
+
+    useEffect(() => {
+        configField.userInput = textValue;
+    }, [textValue, configField]);
 
     return (
         <>
@@ -22,8 +27,12 @@ export default function ConfigFieldItem(
                     {/* Input Field - CheckBox and Input Text */}
                     <Stack direction="row">
                         {!configField.required && (
-                            <Checkbox value={isEnable}
+                            <Checkbox
+                                value={isEnable}
                                 onChange={(e) => {
+                                    if (!e.target.checked) {
+                                        setTextValue("");
+                                    }
                                     setIsEnable(e.target.checked)
                                 }}
                             />
@@ -35,7 +44,8 @@ export default function ConfigFieldItem(
                                 + (configField.multiple ? " array" : "")
                                 + ")"
                             }
-                            onChange={(e) => { configField.userInput = e.target.value }}
+                            value={textValue}
+                            onChange={(e) => { setTextValue(e.target.value) }}
                             multiline={configField.multiple ? true : false}
                             fullWidth
                             disabled={!configField.required && !isEnable}

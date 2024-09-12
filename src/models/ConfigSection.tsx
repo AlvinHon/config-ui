@@ -23,23 +23,29 @@ class ConfigSection {
             throw new Error("Invalid YAML key");
         }
 
+        // yamlKey should be a key in yamlObject
         const fieldValue = yamlObject[yamlKey];
         if (fieldValue === undefined || fieldValue === null) {
             throw new Error("Invalid YAML value");
         }
 
-        let fields = [];
-        for (const fieldKey in fieldValue) {
-
-            let field
+        const fields = Object.entries(fieldValue).map(([fieldKey,]) => {
             try {
-                field = ConfigField.fromYamlObject(fieldKey, fieldValue);
+                return ConfigField.fromYamlObject(fieldKey, fieldValue);
             } catch (error) {
                 throw new Error("Fail at field: " + fieldKey + " - " + error);
             }
-            fields.push(field);
-        }
+        });
+
         return new ConfigSection(yamlKey, fields);
+    }
+
+    toConfigString(): string {
+        return "[" + this.name + "]\n" +
+            this.fields
+                .map((field) => field.toConfigString())
+                .filter((fieldString) => fieldString !== null)
+                .join("\n");
     }
 }
 

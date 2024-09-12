@@ -1,4 +1,4 @@
-import ConfigPrimitiveValue, { ConfigValue } from "./ConfigValue";
+import ConfigPrimitiveValue, { ConfigValue, formatConfigValueString } from "./ConfigValue";
 import { ConfigValueType, possibleValueTypes } from "./ConfigValueType";
 
 class ConfigField {
@@ -30,7 +30,6 @@ class ConfigField {
     }
 
     set userInput(valueString: string) {
-        console.log(valueString);
         if (valueString === "" || valueString === null) {
             this.userInputValue = null;
             return;
@@ -68,15 +67,33 @@ class ConfigField {
         }
 
         try {
+            let fieldType = value['type'];
+            let defaultValue = ConfigPrimitiveValue.fromType(value.default, fieldType);
+            let options = value.options ? value.options.map((v: any) => ConfigPrimitiveValue.fromType(v, fieldType)) : [];
+
             const configFieldObj = {
                 fieldLabel: yamlKey,
-                fieldType: value['type'],
-                ...value
+                fieldType,
+                ...value,
+                default: defaultValue,
+                options,
             };
             return new ConfigField(configFieldObj);
         } catch {
             throw new Error("Invalid Input Format");
         }
+    }
+
+    toConfigString(): string | null {
+        if (!this.required && this.userInputValue === null) {
+            return null;
+        }
+
+        if (this.required && this.userInputValue === null) {
+            return this.fieldLabel + "=" // Config String will include the label but no value
+        }
+
+        return this.fieldLabel + "=" + formatConfigValueString(this.userInputValue);
     }
 }
 

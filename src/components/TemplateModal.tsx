@@ -1,4 +1,4 @@
-import { Box, Divider, MenuItem, Modal, Select, TextField, Typography } from "@mui/material";
+import { Box, Divider, MenuItem, Modal, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { parse } from 'yaml'
 import ConfigSection from "../models/ConfigSection";
@@ -60,14 +60,16 @@ export default function TemplateModal(
     const [templateText, setTemplateText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
-
+    // parse the template text and update the config sections whenever a new template text is provided
     useEffect(() => {
+        // clear the config sections and error message if the template text is empty
         if (templateText === "") {
             setConfigSections([]);
             setErrorMsg("");
             return;
         }
 
+        // parse the template text
         let parsed, errorText = "";
         try {
             parsed = parseTemplate(templateText);
@@ -76,6 +78,7 @@ export default function TemplateModal(
             errorText = "" + error;
         }
 
+        // set the error message if there is an error
         setErrorMsg(errorText);
     }, [templateText, setConfigSections]);
 
@@ -83,10 +86,12 @@ export default function TemplateModal(
     const onSelectionChange = (value: TemplateSelection | "") => {
         setTemplateSelection(value);
 
-        if (value !== "") {
-            setTemplateText(Templates[value]);
+        if (value === "") {
+            setTemplateText("");
             return;
         }
+
+        setTemplateText(Templates[value]);
     }
 
     return (
@@ -99,6 +104,7 @@ export default function TemplateModal(
                     e.preventDefault();
                     onSelectionChange(e.target.value as any);
                 }} >
+                    <MenuItem value="">(Clear)</MenuItem>
                     <MenuItem value="sample">Sample template</MenuItem>
                 </Select>
                 <Divider sx={{ mb: 2 }} />
