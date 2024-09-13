@@ -106,6 +106,7 @@ export default function TemplateModal(
                 }} >
                     <MenuItem value="">(Clear)</MenuItem>
                     <MenuItem value="sample">Sample template</MenuItem>
+                    <MenuItem value="systemd.unit">Systemd unit</MenuItem>
                 </Select>
                 <Divider sx={{ mb: 2 }} />
                 <TextField

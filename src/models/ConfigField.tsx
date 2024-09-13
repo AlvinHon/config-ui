@@ -6,7 +6,7 @@ class ConfigField {
     fieldLabel: string;
     multiple: boolean;
     required: boolean;
-    default: ConfigValue;
+    default: string | null;
     options: ConfigValue[];
     description: string;
     private userInputValue: ConfigValue | null = null;
@@ -16,7 +16,7 @@ class ConfigField {
         fieldLabel: string,
         multiple?: boolean,
         required?: boolean,
-        default?: ConfigValue,
+        default?: string,
         options?: ConfigValue[],
         description?: string
     }) {
@@ -68,14 +68,12 @@ class ConfigField {
 
         try {
             let fieldType = value['type'];
-            let defaultValue = ConfigPrimitiveValue.fromType(value.default, fieldType);
             let options = value.options ? value.options.map((v: any) => ConfigPrimitiveValue.fromType(v, fieldType)) : [];
 
             const configFieldObj = {
                 fieldLabel: yamlKey,
                 fieldType,
                 ...value,
-                default: defaultValue,
                 options,
             };
             return new ConfigField(configFieldObj);

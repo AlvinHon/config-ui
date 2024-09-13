@@ -64,7 +64,7 @@ export default function ConfigFieldItem(
                                 Default value:
                             </InputLabel>
                             <Typography variant="body2">
-                                {formatConfigValueString(configField.default)}
+                                {configField.default}
                             </Typography>
                         </Stack>
                     )}
