@@ -2,7 +2,7 @@ import { Box, Divider, MenuItem, Modal, Select, TextField } from "@mui/material"
 import { useEffect, useState } from "react";
 import { parse } from 'yaml'
 import ConfigSection from "../models/ConfigSection";
-import { Templates, TemplateSelection } from "../Templates";
+import { Templates, TemplateSelection } from "../templates";
 
 const style = {
     position: 'absolute',
@@ -106,7 +106,7 @@ export default function TemplateModal(
                 }} >
                     <MenuItem value="">(Clear)</MenuItem>
                     <MenuItem value="sample">Sample template</MenuItem>
-                    <MenuItem value="systemd.unit">Systemd unit</MenuItem>
+                    <MenuItem value="systemd">Systemd (Unit, Service Install)</MenuItem>
                 </Select>
                 <Divider sx={{ mb: 2 }} />
                 <TextField

@@ -1,35 +1,9 @@
+// https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.unit.5.html
+// https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.service.5.html
 
-export type TemplateSelection = "sample" | "systemd.unit";
-
-export const Templates = {
-  "sample": `
-Unit:
-  Description:
-    type: string
-    required: true
-    description: Service description
-Service:
-  ExecStart:
-    type: string
-    required: true
-    description: Commands that are executed when this service is started.
-  Restart:
-    type: string
-    description: Configures whether the service shall be restarted when the service process exits, is killed, or a timeout is reached.
-    options: ["no", "on-success", "on-failure", "on-abnormal", "on-watchdog", "on-abort", "always"]
-    default: no
-Install:
-  WantedBy:
-    type: string
-    required: true
-`,
-
-  // https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.unit.5.html
-  // https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.service.5.html
-  // 
-  "systemd.unit":
-    // [Unit] 
-    `Unit:
+export const systemdTemplate =
+  // [Unit] 
+  `Unit:
   Description:
     type: string
     required: true
@@ -257,8 +231,8 @@ Install:
           external configuration file format into native unit files. This functionality should
           not be used in normal units.
 `
-    // [Service]
-    + `
+  // [Service]
+  + `
 Service:
   Type:
     type: string
@@ -453,8 +427,8 @@ Service:
           reduce memory pressure.
     default: "continue"
 ` +
-    // [Install]
-    `
+  // [Install]
+  `
 Install:
   Alias:
     type: string
@@ -481,5 +455,4 @@ Install:
     description: >
           The default instance name to use when enabling the template unit. This option is
           particularly useful for template units that are instantiated.
-`
-};
+`;

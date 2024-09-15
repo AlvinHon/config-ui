@@ -1,4 +1,4 @@
-# Config UI `(In Progress)`
+# Config UI
 
 This is a web application to allow users to create config file by interacting with User Interface. The web application is now deployed at Github Pages [here](https://alvinhon.github.io/config-ui/)!
 
