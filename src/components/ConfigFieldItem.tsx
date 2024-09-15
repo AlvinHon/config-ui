@@ -58,13 +58,13 @@ export default function ConfigFieldItem(
                     </Typography>
 
                     {/* Default Value - Display Text */}
-                    {configField.default && (
+                    {configField.default !== null && (
                         <Stack direction="row" spacing={2}>
                             <InputLabel>
                                 Default value:
                             </InputLabel>
                             <Typography variant="body2">
-                                {configField.default}
+                                {configField.default.toString()}
                             </Typography>
                         </Stack>
                     )}

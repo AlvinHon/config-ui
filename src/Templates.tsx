@@ -27,8 +27,9 @@ Install:
   // https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.unit.5.html
   // https://manpages.ubuntu.com/manpages/focal/en/man5/systemd.service.5.html
   // 
-  "systemd.unit": `
-Unit:
+  "systemd.unit":
+    // [Unit] 
+    `Unit:
   Description:
     type: string
     required: true
@@ -149,7 +150,7 @@ Unit:
           units by default unless they are conflicting with other units, or the user explicitly
           requested their shut down. If this option is set, a unit will be automatically cleaned
           up if no other active unit requires it.
-    default: false
+    default: no
   RefuseManualStart:
     type: boolean
     description: >
@@ -157,7 +158,7 @@ Unit:
            indirectly. In this case, explicit start-up requested by the user is
            denied, however if it is started as a dependency of another unit, start-up
            or termination will succeed.
-    default: false
+    default: no
   RefuseManualStop:
     type: boolean
     description: >
@@ -165,7 +166,7 @@ Unit:
           indirectly. In this case, explicit termination requested by the user is
           denied, however if it is stopped as a dependency of another unit, start-up
           or termination will succeed.
-    default: false
+    default: no
   AllowIsolate: 
     type: boolean
     description: >
@@ -173,14 +174,14 @@ Unit:
           command. Otherwise, this will be refused. It probably is a good idea to leave this
           disabled except for target units that shall be used similar to runlevels in SysV init
           systems, just as a precaution to avoid unusable system states.
-    default: true
+    default: yes
   DefaultDependencies:
     type: boolean
     description: >
           If false, removes all dependencies of type Requires= and
           After= from the unit. This option may be used to create a minimal environment for
           the execution of a specific task.
-    default: true
+    default: yes
   CollectMode:
     type: string
     description: >
@@ -255,5 +256,201 @@ Unit:
           useful for implementation of generator tools that convert configuration from an
           external configuration file format into native unit files. This functionality should
           not be used in normal units.
+`
+    // [Service]
+    + `
+Service:
+  Type:
+    type: string
+    description: >
+          Configures the process start-up type for this service unit. It is generally recommended to use Type=simple for long-running services whenever
+          possible, as it is the simplest and fastest option.
+    options: ["simple", "exec", "forking", "oneshot", "dbus", "notify", "idle"]
+    default: simple if ExecStart= is specified, "oneshot" otherwise
+  RemainAfterExit:
+    type: boolean
+    description: >
+          If true, the service shall be considered active even when all its processes have
+          terminated.
+    default: no
+  GuessMainPID:
+    type: boolean
+    description: >
+          If true, systemd will try to guess the main PID of the service if it is not
+          explicitly defined.
+    default: yes
+  PIDFile:
+    type: string
+    description: >
+          Takes a path referring to the PID file of the service.
+  BusName:
+    type: string
+    description: >
+          Takes a D-Bus bus name that this service is reachable as. This option is mandatory for
+          services where Type= is set to dbus.
+  ExecStart:
+    type: string
+    required: true
+    description: >
+          Commands with their arguments that are executed when this service is started. 
+          The value is split into zero or more command lines.
+  ExecStartPre:
+    type: string
+    description: >
+          Additional commands that are executed before the command in ExecStart.
+          The value is split into zero or more command lines.
+  ExecStartPost:
+    type: string
+    description: >
+          Additional commands that are executed after the command in ExecStart.
+          The value is split into zero or more command lines.
+  ExecCondition:
+    type: string
+    description: >
+          Optional commands that are executed before the command(s) in ExecStartPre=. Syntax is
+          the same as for ExecStart=, except that multiple command lines are allowed and the
+          commands are executed one after the other, serially.
+  ExecReload:
+    type: string
+    description: >
+          Commands to execute to trigger a configuration reload in the service. This argument
+          takes multiple command lines, following the same scheme as described for ExecStart=.
+  ExecStop:
+    type: string
+    description: >
+          Commands to execute to stop the service. This argument takes multiple command lines,
+          following the same scheme as described for ExecStart=.
+  ExecStopPost:
+    type: string
+    description: >
+          Additional commands that are executed after the command in ExecStop.
+          The value is split into zero or more command lines.
+  RestartSec:
+    type: string
+    description: >
+          Configures the time to sleep before restarting a service (as configured with Restart=).
+          Takes a unit-less value in seconds, or a time span value such as "5min
+          20s
+    default: 100ms
+  TimeoutStartSec:
+    type: string
+    description: >
+          Configures the time to wait for start-up. If a daemon service does not signal
+          start-up completion within the configured time, the service will be considered failed
+          and will be shut down again. Takes a unit-less value in seconds, or a time span value such as
+          "5min 20s". Pass "infinity" to disable the timeout logic.
+    default: (DefaultTimeoutStartSec in manager configuration, except when Type=oneshot is used)
+  TimeoutStopSec:
+    type: string
+    description: >
+          Configures the time to wait for stop. If a service does not terminate within the
+          configured time, it will be terminated forcibly via SIGTERM, and after another
+          timeout of equal duration with SIGKILL. Takes a unit-less value in seconds, or a time span value such as
+          "5min 20s". Pass "infinity" to disable the timeout logic.
+    default: (DefaultTimeoutStopSec in manager configuration)
+  TimeoutAbortSec:
+    type: string
+    description: >
+          Configures the time to wait for a service stop before the service manager sends a
+          SIGKILL signal. Takes a unit-less value in seconds, or a time span value such as
+          "5min 20s". Pass "infinity" to disable the timeout logic.
+    default: (DefaultTimeoutAbortSec in manager configuration)
+  TimeoutSec:
+    type: string
+    description: >
+          A shorthand for configuring both TimeoutStartSec= and TimeoutStopSec= to the specified
+          value.
+  RuntimeMaxSec:
+    type: string
+    description: >
+          Configures the maximum time that the service is allowed to run. If this is used and
+          the service is started. Pass "infinity" (the default) to configure no runtime limit.
+    default: infinity
+  WatchdogSec:
+    type: string
+    description: >
+          Configures the watchdog timeout for a service. The watchdog is activated when the
+          start-up is completed. The service must call sd_notify(3) regularly with the "WATCHDOG=1"
+          argument. If the time between two such calls is larger than the configured time, the
+          service is placed in a failed state and it will be terminated with a SIGABRT signal.
+          The argument is a time in seconds. Defaults to 0, which disables this feature.
+    default: 0
+  Restart:
+    type: string
+    description: >
+          Configures whether the service shall be restarted when the service process exits, is
+          killed, or a timeout is reached.
+    options: ["no", "on-success", "on-failure", "on-abnormal", "on-watchdog", "on-abort", "always"]
+    default: no
+  SuccessExitStatus:
+    type: string
+    description: >
+          Takes a list of exit status definitions that, when returned by the main service process,
+          will be considered successful termination, ordered from the least to the highest
+          precedence.
+  RestartPreventExitStatus:
+    type: string
+    description: >
+          Takes a list of exit status definitions that, when returned by the main service process,
+          will prevent automatic service restarts, ordered from the least to the highest
+          precedence.
+  RestartForceExitStatus:
+    type: string
+    description: >
+          Takes a list of exit status definitions that, when returned by the main service process,
+          will force automatic service restarts, ordered from the least to the highest
+          precedence.
+  RootDirectoryStartOnly:
+    type: boolean
+    description: >
+          If true, the root directory, as configured with the
+          RootDirectory= option for more information), is only applied to
+          the process started with ExecStart=, and not to the various other ExecStartPre=,
+          ExecStartPost=, ExecReload=, ExecStop=, and ExecStopPost= commands. If false, the
+          setting is applied to all configured commands the same way. Defaults to false.
+    default: no
+  NonBlocking:
+    type: boolean
+    description: >
+          Set the O_NONBLOCK flag for all file descriptors passed via socket-based activation.
+          If true, all file descriptors >= 3 (i.e. all except stdin, stdout, stderr), excluding
+          those passed in via the file descriptor storage logic, will have the O_NONBLOCK flag set and hence are in non-blocking mode. This
+          option is only useful in conjunction with a socket unit, and has no effect on file descriptors which were previously saved in
+          the file-descriptor store for example.
+    default: no
+  NotifyAccess:
+    type: string
+    description: >
+          Controls access to the service status notification socket, as accessible via the
+          sd_notify(3) call.
+    options: ["none", "main", "exec", "all"]
+    default: none
+  Sockets:
+    type: string
+    description: >
+          Takes a space-separated list of socket unit names. If set, all sockets associated with
+          the specified socket unit names are passed to the executed process.
+  FileDescriptorStoreMax:
+    type: number
+    description: >
+          Configure how many file descriptors may be stored in the service manager for the
+          service using sd_pid_notify_with_fds(3)'s "FDSTORE=1" messages.
+    default: 0
+  USBFunctionDescriptors:
+    type: string
+    description: >
+          Configure the location of a file containing USB FunctionFS[2] descriptors, for
+          implementation of USB gadget functions.
+  USBFunctionStrings:
+    type: string
+    description: >
+          Configure the location of a file containing USB FunctionFS strings.
+  OOMPolicy:
+    type: string
+    description: >
+          Configure the Out-Of-Memory (OOM) killer policy. On Linux, when memory becomes scarce
+          the kernel might decide to kill a running process in order to free up memory and
+          reduce memory pressure.
+    default: "continue"
 `
 };
