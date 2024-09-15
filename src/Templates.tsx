@@ -452,5 +452,34 @@ Service:
           the kernel might decide to kill a running process in order to free up memory and
           reduce memory pressure.
     default: "continue"
+` +
+    // [Install]
+    `
+Install:
+  Alias:
+    type: string
+    description: >
+          A space-separated list of additional names this unit shall be installed under. The
+          names listed here must have the same suffix (i.e. type) as the unit file name.
+  WantedBy:
+    type: string
+    required: true
+    description: >
+          A space-separated list of unit names. Configures the target that the current unit
+          should be installed into when it is enabled.
+  RequiredBy:
+    type: string
+    description: >
+          A space-separated list of unit names. Configures the units that are started when the
+          current unit is started.
+  Also:
+    type: string
+    description: >
+          A space-separated list of additional units to install when this unit is installed.
+  DefaultInstance:
+    type: string
+    description: >
+          The default instance name to use when enabling the template unit. This option is
+          particularly useful for template units that are instantiated.
 `
 };
