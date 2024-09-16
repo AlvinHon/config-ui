@@ -1,39 +1,28 @@
-import { ConfigValueType } from "./ConfigValueType";
-
-class ConfigPrimitiveValue {
-    value: ConfigValueType;
-    constructor(value: ConfigValueType) {
+class ConfigValue {
+    // The actual value is encapsulated in the `value` field in type `any`
+    // so that it supports nested config value.
+    value: any;
+    constructor(value: any) {
         this.value = value;
     }
-    static fromType(value: any, valueType: ConfigValueType): ConfigPrimitiveValue | null {
-        if (value === null || value === undefined) {
-            return null;
-        }
-        switch (valueType) {
-            case "string":
-                return new ConfigPrimitiveValue(value.toString());
-            case "number":
-                return new ConfigPrimitiveValue(Number(value));
-            case "boolean":
-                return new ConfigPrimitiveValue(Boolean(value));
-            default:
-                throw new Error("Invalid type");
+
+    formatToString(): string {
+        if (this.value === null) {
+            return "null";
+        } else if (Array.isArray(this.value)) {
+            return this.value
+                .map((v) => {
+                    if (v instanceof ConfigValue) {
+                        return v.formatToString();
+                    } else {
+                        return v.toString();
+                    }
+                })
+                .join(", ");
+        } else {
+            return this.value.toString();
         }
     }
 }
 
-type ConfigValue = ConfigPrimitiveValue | ConfigPrimitiveValue[] | null;
-
-function formatConfigValueString(value: ConfigValue): string {
-    if (value === null) {
-        return "null";
-    } else if (Array.isArray(value)) {
-        return value.map((v) => formatConfigValueString(v)).join(", ");
-    } else {
-        return value.value.toString();
-    }
-}
-
-export default ConfigPrimitiveValue;
-export type { ConfigValue };
-export { formatConfigValueString };
+export default ConfigValue;

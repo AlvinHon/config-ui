@@ -1,4 +1,4 @@
-import ConfigPrimitiveValue, { ConfigValue, formatConfigValueString } from "./ConfigValue";
+import ConfigValue from "./ConfigValue";
 import { ConfigValueType, possibleValueTypes } from "./ConfigValueType";
 
 class ConfigField {
@@ -12,7 +12,7 @@ class ConfigField {
     private userInputValue: ConfigValue | null = null;
 
     constructor(params: {
-        fieldType: string,
+        fieldType: ConfigValueType,
         fieldLabel: string,
         multiple?: boolean,
         required?: boolean,
@@ -36,13 +36,13 @@ class ConfigField {
         }
 
         if (this.multiple) {
-            this.userInputValue = valueString
-                .split("\n")
-                .map((v) => v.trim())
-                .filter((v) => v !== "")
-                .map((v) => new ConfigPrimitiveValue(v));
+            this.userInputValue = new ConfigValue(
+                valueString
+                    .split("\n")
+                    .map((v) => v.trim())
+                    .filter((v) => v !== ""))
         } else {
-            this.userInputValue = new ConfigPrimitiveValue(valueString);
+            this.userInputValue = new ConfigValue(valueString);
         }
     }
 
@@ -68,7 +68,7 @@ class ConfigField {
 
         try {
             let fieldType = value['type'];
-            let options = value.options ? value.options.map((v: any) => ConfigPrimitiveValue.fromType(v, fieldType)) : [];
+            let options = value.options ? value.options.map((v: any) => new ConfigValue(v)) : [];
 
             const configFieldObj = {
                 fieldLabel: yamlKey,
@@ -91,7 +91,7 @@ class ConfigField {
             return this.fieldLabel + "=" // Config String will include the label but no value
         }
 
-        return this.fieldLabel + "=" + formatConfigValueString(this.userInputValue);
+        return this.fieldLabel + "=" + this.userInputValue?.formatToString();
     }
 }
 

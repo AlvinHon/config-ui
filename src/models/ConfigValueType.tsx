@@ -1,6 +1,6 @@
-type ConfigValueType = string | number | boolean;
+type ConfigValueType = "string" | "number" | "boolean";
 
-function possibleValueTypes(): string[] {
+function possibleValueTypes(): ConfigValueType[] {
     return ["string", "number", "boolean"]
 }
 

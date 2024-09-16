@@ -1,7 +1,6 @@
 import { CardContent, Checkbox, InputLabel, List, ListItem, Stack, TextField, Typography } from "@mui/material";
 import ConfigField from "../models/ConfigField";
 import { useEffect, useState } from "react";
-import { formatConfigValueString } from "../models/ConfigValue";
 
 export default function ConfigFieldItem(
     { configField }: { configField: ConfigField }
@@ -89,7 +88,7 @@ export default function ConfigFieldItem(
                                         key={configField.fieldLabel + "option" + index}
                                         disableGutters
                                     >
-                                        {formatConfigValueString(option)}
+                                        {option.formatToString()}
                                     </ListItem>
                                 ))}
                             </List>
